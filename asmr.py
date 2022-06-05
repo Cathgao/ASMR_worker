@@ -89,3 +89,5 @@ root_path = "RJ" + str(work_data["id"])
 if os.path.exists(root_path):
     os.rename(root_path,root_path + " " + work_data["title"])
 print('所有工作完成')
+
+os.system("pause")
