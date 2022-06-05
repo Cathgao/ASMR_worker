@@ -9,10 +9,10 @@ from tqdm import tqdm
 
 # 指定token
 #此处替换你获得的下载token
-token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FzbXIub25lIiwic3ViIjoiQ2F0aDEyMzQiLCJhdWQiOiJodHRwczovL2FzbXIub25lL2FwaSIsIm5hbWUiOiJDYXRoMTIzNCIsImdyb3VwIjoidXNlciIsImlhdCI6MTY1NDQzODMzMSwiZXhwIjoxNjU1NjQ3OTMxfQ.z4-ZjdzjMXEBuMRBuoI6WoKDZHHegSV9p_doqAwrO0E'
+token = input("输入获取的token（不包括“token=”）： ")
 # 指定作品RJ号
 #此处替换要下载的作品RJ号，不包括RJ前缀
-RJ_number = "390697"
+RJ_number = input("输入作品编号（不包括前缀如“RJ”）： ")
 
 
 def download(url: str, fname: str):
@@ -55,11 +55,9 @@ jdata = json.loads(audio_content)
 for i in range(len(jdata)):
     if "children" in jdata[i]:
         for base in jdata[i]["children"]:
-            print("url: " + base["mediaDownloadUrl"])
             baseUrl = base["mediaDownloadUrl"]
             raw_path = os.path.split(urlparse(baseUrl).path.split("/", 5)[-1])  # 获取url中的目录结构
             file_path = urllib.parse.unquote(raw_path[0])  # 转码
-            print("path: " + file_path)
             if os.path.exists(file_path): #检查目录结构是否存在
                 download(baseUrl,file_path + "/" + base["title"]) #下载文件
             else:
@@ -67,13 +65,11 @@ for i in range(len(jdata)):
                 os.makedirs(file_path)
                 download(baseUrl,file_path + "/" + base["title"]) #下载文件
     else:  # 处理没有children的根目录url
-        print("url: " + jdata[i]["mediaDownloadUrl"])
         baseUrl = jdata[i]["mediaDownloadUrl"]
         a = urlparse(baseUrl).path.split("/", 5)
         raw_path = os.path.split(
             urlparse(baseUrl).path.split("/", 5)[-1])  # 获取url中的目录结构
         file_path = urllib.parse.unquote(raw_path[0])  # 转码
-        print("path: " + file_path)
         if os.path.exists(file_path):  # 检查目录结构是否存在
             download(baseUrl,file_path + "/" + jdata[i]["title"]) #下载文件
         else:
@@ -81,8 +77,9 @@ for i in range(len(jdata)):
             os.makedirs(file_path)
             download(baseUrl,file_path + "/" + jdata[i]["title"]) #下载文件
 print('下载完毕')
+print('等待修改根目录名')
 
-###########创建根目录###########
+###########修改根目录名###########
 # 指定作品url
 work_url = 'https://api.asmr.one/api/work/' + RJ_number + '?token=' + token
 work_content = requests.get(url=work_url, headers=headers).content
