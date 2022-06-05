@@ -65,6 +65,7 @@ for i in range(len(jdata)):
             else:
                 #创建文件夹
                 os.makedirs(file_path)
+                download(baseUrl,file_path + "/" + base["title"]) #下载文件
     else:  # 处理没有children的根目录url
         print("url: " + jdata[i]["mediaDownloadUrl"])
         baseUrl = jdata[i]["mediaDownloadUrl"]
@@ -78,6 +79,7 @@ for i in range(len(jdata)):
         else:
             # 创建文件夹
             os.makedirs(file_path)
+            download(baseUrl,file_path + "/" + jdata[i]["title"]) #下载文件
 print('下载完毕')
 
 ###########创建根目录###########
