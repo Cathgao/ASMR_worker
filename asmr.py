@@ -9,6 +9,7 @@ import urllib
 from urllib.parse import urlparse
 from tqdm import tqdm
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 token = NULL
 RJ_number = NULL
@@ -158,4 +159,4 @@ else:
     if os.path.exists(root_path):
         os.rename(root_path,root_path + " " + work_data["title"])
     print('RJ' + RJ_number + "下载完毕")
-    os.system("pause")
+os.system("pause")
