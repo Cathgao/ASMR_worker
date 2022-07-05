@@ -8,6 +8,7 @@ import os
 import urllib
 from urllib.parse import urlparse
 from tqdm import tqdm
+import unicodedata
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -19,9 +20,16 @@ user_info = {
 }
 UserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15'
 
+#######路径非法字符转换######
+def convertIllegalPath(originPath):
+    illegalPath=["\\",'/','*',':','?']
+    ChineseChar=['、','、','＊','：','？']
+    convertPath = str(originPath)
+    for i in range(0,len(illegalPath)):
+        convertPath = convertPath.replace(illegalPath[i], ChineseChar[i])
+    return convertPath
+
 #######使用账户名密码登录######
-
-
 def login():
     global user_info
     #账户名密码表单
@@ -51,8 +59,6 @@ def login():
         return 0
 
 #######下载实现########
-
-
 def download(url: str, fname: str):
     # 用流stream的方式获取url的数据
     resp = requests.get(url, stream=True)
@@ -75,8 +81,6 @@ def download(url: str, fname: str):
             bar.update(size)
 
 ######递归检查所有目录结构######
-
-
 def rDirCheck(fileNode):
     if(fileNode["type"] == "folder") and ("children" in fileNode):
         for child in fileNode["children"]:
@@ -88,7 +92,7 @@ def rDirCheck(fileNode):
         file_path = urllib.parse.unquote(raw_path[0])  # 转码
         if not os.path.exists(file_path):  # 检查目录结构是否存在
             os.makedirs(file_path)
-        download(baseUrl, file_path + "/" + fileNode["title"])  # 下载文件
+        download(baseUrl, file_path + "/" + convertIllegalPath(unicodedata.normalize('NFKC', fileNode["title"])))#fileNode["title"])  # 下载文件
 
 
 ######查询作品号########
@@ -157,6 +161,6 @@ else:
     work_data = json.loads(work_content)
     root_path = "RJ" + str(work_data["id"])
     if os.path.exists(root_path):
-        os.rename(root_path, root_path + " " + work_data["title"])
+        os.rename(root_path, root_path + " " + convertIllegalPath(work_data["title"]))
     print('RJ' + RJ_number + "下载完毕")
 os.system("pause")
